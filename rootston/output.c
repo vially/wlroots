@@ -27,6 +27,8 @@ static void render_surface(struct wlr_surface *surface,
 
 		if (wlr_output_layout_intersects(desktop->layout, wlr_output,
 				lx, ly, lx + width, ly + height)) {
+			// TODO: accomodate for mismatched scale, which can happen, for
+			// example, when a view is rendered over two outputs
 			float matrix[16];
 
 			float translate_origin[16];
@@ -191,6 +193,7 @@ void output_add_notify(struct wl_listener *listener, void *data) {
 
 	struct output_config *output_config = config_get_output(config, wlr_output);
 	if (output_config) {
+		wlr_output->scale = output_config->scale;
 		wlr_output_transform(wlr_output, output_config->transform);
 		wlr_output_layout_add(desktop->layout,
 				wlr_output, output_config->x, output_config->y);
