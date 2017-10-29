@@ -183,10 +183,6 @@ TODO
 
 TODO
 
-\subsection{Cursors}\label{wlr cursor summary}
-
-TODO
-
 \subsection{Keyboard Handling}\label{keyboard handling}
 
 TODO
@@ -320,35 +316,67 @@ A number of utility functions are available in the header.
 
 \subsection{wlr_compositor}\label{wlr compositor}
 
-TODO
+\code{wlr/types/wlr_compositor.h}\\
+
+\textbf{wlr_compositor} is an implementation of the \textbf{wl_compositor}
+interface. Generally this is not directly useful to compositor implementations,
+as the surfaces created by it will have no role. Nevertheless, a new_surface
+event is provided.
 
 \subsection{wlr_cursor}\label{wlr cursor}
 
-TODO
+\code{wlr/types/wlr_cursor.h}\\
+
+\textbf{wlr_cursor} is an abstraction for cursors; that is, the cursor image
+that appears on-screen. It is able bind one or more input devices to a single
+on-screen cursor, and configure them to be bound to a \nameref{wlr output
+layout}, specific displays, or regions of the screen.
 
 \subsection{wlr_data_device}\label{wlr data device}
 
-TODO
+\code{wlr/types/wlr_data_device.h}\\
+
+\textbf{wlr_data_device} implements the \textbf{wl_data_device_manager}
+interface and related sub-interfaces. It is used for clipboard handling and
+drag-and-drop operations. Clipboard handling largely takes care of itself, but
+drag-and-drop requries some involvement from the compositor implementation.
 
 \subsection{wlr_gamma_control}\label{wlr gamma control}
 
-TODO
+\code{wlr/types/wlr_gamma_control.h}\\
+
+\textbf{wlr_gamma_control} implements the Orbital gamma control protocol, and
+largely takes care of itself once initialized.
 
 \subsection{wlr_input_device}\label{wlr input device}
 
-TODO
+\code{wlr/types/wlr_input_device.h}\\
+
+\textbf{wlr_input_device} is a container for an arbitrary kind of input device.
+Based on the value of \code{wlr_input_device.type}, one of the pointers in the
+union is valid and contains state specific to each device type.
 
 \subsection{wlr_keyboard}\label{wlr keyboard}
 
-TODO
+\code{wlr/types/wlr_keyboard.h}\\
+
+\textbf{wlr_keyboard} provides an abstraction for backend-specific keyboard
+hardware, and also manages a xkb_keymap and xkb_state for the keyboard.
 
 \subsection{wlr_list}\label{wlr list}
 
-TODO
+\code{wlr/types/wlr_list.h}\\
+
+\textbf{wlr_list} is a simple list of \code{void*} pointers that grows and
+shrinks in memory. It is used when \textbf{wl_list} does not suffice.
 
 \subsection{wlr_matrix}\label{wlr matrix}
 
-TODO
+\code{wlr/render/matrix.h}\\
+
+\textbf{wlr_matrix} contains a 4x4 matrix, useful in graphics operations.
+Several utility functions are provided for matrix arithmetic and preparing stock
+matricies for 2D and 3D transformations.
 
 \subsection{wlr_output}\label{wlr output}
 
@@ -379,62 +407,125 @@ intersecting boxes with outputs. It can also be used to mirror outputs.
 
 \subsection{wlr_pointer}\label{wlr pointer}
 
-TODO
+\code{wlr/types/wlr_pointer.h}\\
+
+\textbf{wlr_pointer} provides an abstraction for backend-specific pointer
+hardware.
 
 \subsection{wlr_region}\label{wlr region}
 
-TODO
+\code{wlr/types/wlr_region.h}\\
+
+\textbf{wlr_region} is an implementation of \textbf{wl_region} backed by
+a pixman_region32_t.
 
 \subsection{wlr_renderer}\label{wlr renderer}
+
+\code{wlr/render.h}\\
 
 TODO
 
 \subsection{wlr_screenshooter}\label{wlr screenshooter}
 
-TODO
+\code{wlr/types/wlr_screenshooter.h}\\
+
+\textbf{wlr_screenshooter} is an implementation of the Orbital screenshooter
+protocol, which is itself a fork of the Weston screenshooter protocol. Once
+initialized it largely takes care of itself.
 
 \subsection{wlr_seat}\label{wlr seat}
 
-TODO
+\code{wlr/types/wlr_seat.h}\\
+
+\textbf{wlr_seat} is an implementation of the \textbf{wl_seat} interface. It is
+responsible for communicating input events to a client, and the compositor
+implementation is responsible for communicating input events to
+\textbf{wlr_seat}. All input events are then dispatched through a keyboard or
+pointer \emph{grab}. By default the grab dispatches events normally, but certain
+shells use grabs for some features like drop-down menus to temporarily take
+greater control over the seat's input.
+
+It is up to the compositor implementation to implement focus semantics and
+communicate to \textbf{wlr_seat} how to dispatch events to which clients.
 
 \subsection{wlr_server_decoration}\label{wlr server decoration}
 
-TODO
+\code{wlr/types/wlr_server_decoration.h}\\
+
+\textbf{wlr_server_decoration} is an implementation of KDE's server decoration
+protocol. It is used to negotiate client- versus server-side window decorations
+with Wayland clients.
 
 \subsection{wlr_surface}\label{wlr surface}
 
-TODO
+\code{wlr/types/wlr_surface.h}\\
+
+\textbf{wlr_surface} is an implementation of the \textbf{wl_surface} interface.
+It is a double buffered state machine that clients can attach
+\textbf{wl_buffers} to (backed by \textbf{wlr_textures}) and configure their
+appearance. During rendering, the compositor implementation will be provided
+\textbf{wlr_surfaces} by each shell and should display them as they see fit.
+This is a very complicated interface, be thankful we did it for you.
 
 \subsection{wlr_tablet_pad}\label{wlr tablet pad}
 
-TODO
+\code{wlr/types/wlr_tablet_pad.h}\\
+
+\textbf{wlr_tablet_pad} provides an abstraction for backend-specific tablet pad
+hardware -- that is, the "pad" part of a drawling tablet.
 
 \subsection{wlr_tablet_tool}\label{wlr tablet tool}
 
-TODO
+\code{wlr/types/wlr_tablet_tool.h}\\
+
+\textbf{wlr_tablet_tool} provides an abstraction for backend-specific tablet
+tool hardware -- that is, the "pen" part of a drawling tablet.
 
 \subsection{wlr_texture}\label{wlr texture}
 
-TODO
+\code{wlr/render.h}
+
+A \textbf{wlr_texture} stores state related to a texture on the GPU. It also
+provides convenience functions for uploading pixels from pointers, Wayland
+shared memory buffers, or DRM buffers.
 
 \subsection{wlr_touch}\label{wlr touch}
 
-TODO
+\code{wlr/types/wlr_touch.h}\\
+
+\textbf{wlr_tablet_tool} provides an abstraction for backend-specific (multi-)
+touch hardware.
 
 \subsection{wlr_wl_shell}\label{wlr wl shell}
 
-TODO
+\code{wlr/types/wlr_wl_shell.h}\\
+
+\textbf{wlr_wl_shell} implements the \textbf{wl_shell} interface. Events are
+raised when surfaces are bound to this role, as well as when the client requests
+resize, move, etc.
 
 \subsection{wlr_xcursor}\label{wlr xcursor}
 
-TODO
+\code{wlr/xcursor.h}\\
+
+\textbf{wlr_xcursor} is a small utility library based on \emph{wayland-cursor}
+that allows you to load a \textbf{wlr_xcursor_theme} and read cursor data from
+it. This is useful for setting the cursor image in your compositor when no
+clients are currently providing them.
 
 \subsection{wlr_xdg_shell_v6}\label{wlr xdg shell v6}
 
-TODO
+\code{wlr/types/wlr_xdg_shell_v6.h}\\
+
+\textbf{wlr_xdg_shell_v6} implements the \textbf{xdg-shell-v6} protocol. Events
+are raised when surfaces are bound to this role, as well as when the client
+requests resize, move, etc.
 
 \subsection{wlr_xwayland}\label{wlr xwayland}
 
-TODO
+\code{wlr/types/wlr_xwayland.h}\\
+
+\textbf{wlr_xwayland} can spawn an Xwayland server and provides an interface
+similar to wlroots' other shells for managing X11 client surfaces.
 
 \end{document}
