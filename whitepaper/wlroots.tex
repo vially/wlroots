@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage{hyperref}
+\usepackage[nohyphen]{underscore}
+\begin{document}
+\title{Modular Wayland compositors with wlroots}
+\author{Drew DeVault et al
+    \thanks{Complete list available at \url{https://github.com/swaywm/wlroots/graphs/contributors}}}
+\maketitle
+
+\begin{abstract}
+wlroots is a flexible and modular library upon which Wayland compositors can be
+built. It is designed to maximize several factors: code reusability,
+interoperability between Wayland compositors, and flexibility for use in novel
+compositor designs.
+\end{abstract}
+
+\newpage
+\tableofcontents
+
+\newpage
+\section{Background}
+
+Wayland is a protocol used to communicate between user applications and a
+\emph{compositor}. The compositor has ownership over input and output
+resources -- typically displays connected over DVI, HDMI, etc, and keyboards,
+mice, etc.
+
+wlroots (stylized in lowercase, or as "wlr") is a subproject of the Sway
+compositor. Originally, Sway was written on top of a similar library called wlc.
+This library offered abstractions on top of DRM, GBM, GLES, libinput, and so on
+-- allowing Sway to focus on building the software specific to the compositor.
+However, with time it became clear that wlc's design is too limiting, and many
+of Sway's long-term goals were difficult to achieve based on it.
+
+\subsection{Alternatives}
+
+Several alternative approaches to building compositors exist.\\
+
+\textbf{libweston} is the most notable alternative. It is a subproject of the
+Weston compositor, the reference Wayland compositor. However, it is generally
+poorly suited to novel compositors that don't use the traditional desktop
+paradigm. It is also less modular and difficult to break into several pieces.
+Additionally, as a consequence of being refactored out of an existing
+compositor, it inherits many design decisions of Weston itself, which may not be
+amenable to other compositors.
+
+\textbf{swc} and \textbf{wlc} are similar. They both strike a reasonable balance
+between size and features, but both make decisions for the compositor that lock
+them into particular designs and make novel compositors more difficult to
+write. The advantage of their approach is that it is easy to use them to build a
+simple working compositor - in a matter of minutes, not days or weeks.
+
+Another approach is to simply write your compositor entirely in-house. This is
+the approach favored by \textbf{mutter} and \textbf{kwin} of the GNOME and KDE
+projects respectively. The advantage of this approach is the flexibility to
+design your compositor in any way you please. However, lots of work is
+duplicated between projects with this approach, which can lead to compositors
+which are subtly incompatible with each other.
+
+The approach taken by \textbf{wlroots} offers reusability and consistency
+between compositors based on it, and offloads lots work from the compositor
+implementation. This is accomplished without making design decisions on behalf
+of the compositor implementation: we believe virtually any novel kind of
+compositor can be built on top of wlroots.
+
+The main disadvantage of our approach is that batteries are not included. More
+work is required to get a working compositor compared to libweston or wlc.
+However, you will not hit the limitations of these libraries, and will more
+quickly arrive at a diverse featureset than with the kwin or mutter approaches.
+
+\section{High-level Organization}
+
+wlroots is organized into many discrete components that can be used separately
+or replaced with your own implementations, and freely composed.
+
+\subsection{Backends}
+
+Backends are used to abstract access to input and output hardware. A backend,
+once initialized, provides some number of \textbf{wlr_outputs} and
+\textbf{wlr_input_devices}, the latter being an abstraction on top of types
+like \textbf{wlr_pointer}, \textbf{wlr_keyboard}, \textbf{wlr_touch}, and so on.
+
+Backends include \emph{drm} and \emph{libinput}, which abstract the
+corresponding Linux subsystems; \emph{wayland}, which uses Wayland windows on
+another running Wayland compositor; the similar \emph{x11} backend; \emph{rdp},
+which uses the remote desktop protocol; and so on. An interface is provided so
+that compositor implementations can supply their own backend implementations as
+well.
+
+Also available is the \emph{multi} backend, which acts as a container for many
+backends. This is necessary, for example, to use DRM and libinput together. It
+also allows you to add and remove backends at runtime. An example use-case:
+adding an RDP backend at runtime.
+
+\subsection{Types}
+
+Types are at the heart of wlroots. They offer small, composable bits of
+functionality, and include simple data structures like \textbf{wlr_box},
+implementations of Wayland interfaces like \textbf{wlr_wl_shell}, and wlr tools
+like \textbf{wlr_cursor}. Also included are types like \textbf{wlr_keyboard},
+which are abstractions for backend types. Types like this are generally
+accompanied by an \emph{interface}, which can be implemented by compositors and
+integrated with other parts of wlroots.
+
+\end{document}
