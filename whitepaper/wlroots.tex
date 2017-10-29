@@ -293,11 +293,25 @@ included in \code{include/types/*.h}. These include:
 
 \subsection{wlr_backend}\label{wlr backend}
 
-TODO
+\code{wlr/backend.h}\\
+
+This type abstracts the functionality of hardware backends. For an overview of
+this system and available backends see \nameref{high level backends}.
 
 \subsection{wlr_box}\label{wlr box}
 
-TODO
+\code{wlr/types/wlr_box.h}\\
+
+\textbf{wlr_box} is a simple data structure:
+
+\begin{verbatim}
+struct wlr_box {
+	int x, y;
+	int width, height;
+};
+\end{verbatim}
+
+A number of utility functions are available in the header.
 
 \subsection{wlr_compositor}\label{wlr compositor}
 
@@ -333,11 +347,30 @@ TODO
 
 \subsection{wlr_output}\label{wlr output}
 
-TODO
+\code{wlr/types/wlr_output.h}\\
+
+\textbf{wlr_output} abstracts access to display hardware provided by backends.
+The most important functionality offered by \textbf{wlr_outputs} is the frame
+event. The output will raise this event when it is ready to accept a new frame.
+You should make the EGL context current via \code{wlr_output_make_current},
+render your frame, and use \code{wlr_output_swap_buffers} to present it.\\
+
+Additionally, \textbf{wlr_outputs} offer hardware cursors. In the event that
+hardware cursors are not supported on a particular backend, software cursors
+are used automatically. TODO: the details of this functionality are going to
+change.\\
+
+\code{wlr/interfaces/wlr_output.h} contains an interface you may use to
+provide your own wlr_output implementations.
 
 \subsection{wlr_output_layout}\label{wlr output layout}
 
-TODO
+\code{wlr/types/wlr_output_layout.h}\\
+
+\textbf{wlr_output_layout} provides a mechanism for arranging
+\textbf{wlr_outputs} in physical space. It provides functionality for arranging
+a virtual desktop, translating global coordinates to output space, and
+intersecting boxes with outputs. It can also be used to mirror outputs.
 
 \subsection{wlr_pointer}\label{wlr pointer}
 
