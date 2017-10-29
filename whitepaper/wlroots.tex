@@ -70,7 +70,7 @@ work is required to get a working compositor compared to libweston or wlc.
 However, you will not hit the limitations of these libraries, and will more
 quickly arrive at a diverse featureset than with the kwin or mutter approaches.
 
-\section{High-level Organization}\label{highlevel}
+\section{High-level Architecture}\label{highlevel}
 
 wlroots is organized into many discrete components that can be used separately
 or replaced with your own implementations, and freely composed.
@@ -103,6 +103,11 @@ like \textbf{wlr_cursor}. Also included are types like \textbf{wlr_keyboard},
 which are abstractions for backend types. Types like this are generally
 accompanied by an \emph{interface}, which can be implemented by compositors and
 integrated with other parts of wlroots.
+
+\subsection{Rootston}\label{rootston}
+
+Our reference compositor is Rootston, and it is used to develop most wlroots
+features as well as to serve as a demonstration of how they are used.
 
 \newpage
 \section{Backends}\label{backends}
