@@ -1,6 +1,7 @@
 \documentclass{article}
 \usepackage{hyperref}
 \usepackage[nohyphen]{underscore}
+\usepackage[english]{babel}
 \newcommand{\code}[1]{\texttt{#1}}
 \begin{document}
 \title{Modular Wayland compositors with wlroots}
@@ -19,7 +20,7 @@ compositor designs.
 \tableofcontents
 
 \newpage
-\section{Background}
+\section{Background}\label{background}
 
 Wayland is a protocol used to communicate between user applications and a
 \emph{compositor}. The compositor has ownership over input and output
@@ -33,7 +34,7 @@ This library offered abstractions on top of DRM, GBM, GLES, libinput, and so on
 However, with time it became clear that wlc's design is too limiting, and many
 of Sway's long-term goals were difficult to achieve based on it.
 
-\subsection{Alternatives}
+\subsection{Alternatives}\label{alternatives}
 
 Several alternative approaches to building compositors exist.\\
 
@@ -69,12 +70,12 @@ work is required to get a working compositor compared to libweston or wlc.
 However, you will not hit the limitations of these libraries, and will more
 quickly arrive at a diverse featureset than with the kwin or mutter approaches.
 
-\section{High-level Organization}
+\section{High-level Organization}\label{highlevel}
 
 wlroots is organized into many discrete components that can be used separately
 or replaced with your own implementations, and freely composed.
 
-\subsection{Backends}
+\subsection{Backends}\label{high level backends}
 
 Backends are used to abstract access to input and output hardware. A backend,
 once initialized, provides some number of \textbf{wlr_outputs} and
@@ -93,7 +94,7 @@ backends. This is necessary, for example, to use DRM and libinput together. It
 also allows you to add and remove backends at runtime. An example use-case:
 adding an RDP backend at runtime.
 
-\subsection{Types}
+\subsection{Types}\label{high level types}
 
 Types are at the heart of wlroots. They offer small, composable bits of
 functionality, and include simple data structures like \textbf{wlr_box},
@@ -104,9 +105,9 @@ accompanied by an \emph{interface}, which can be implemented by compositors and
 integrated with other parts of wlroots.
 
 \newpage
-\section{Backends}
+\section{Backends}\label{backends}
 
-\subsection{Backend initialization}
+\subsection{Backend initialization}\label{backend init}
 
 There are two steps to setting up a backend -- first they are created, and then
 they are started. During creation, the backend will obtain access to the
@@ -118,28 +119,28 @@ and pass them to the compositor. Backends are started with
 \textbf{wlr_backend_start}, available in \code{wlr/backend.h}. Creation is more
 subtle.
 
-\subsection{Automatic selection}
+\subsection{Automatic selection}\label{backend autocreate}
 
 The simplest way to obtain a backend is with \textbf{wlr_backend_autocreate},
 available in \code{wlr/backend.h}. It will examine the runtime environment and
 return the most suitable \textbf{wlr_backend}.
 
-\subsection{Multi-backend}
+\subsection{Multi-backend}\label{multi backend}
 
 A backend is available in \code{wlr/backend/multi.h} which can encapsulate many
 other backends. Inputs and outputs added in these several backends can be
 bubbled up through the multi-backend as if it were a single backend. Backends
 can also be added to and removed from a multi-backend at runtime.
 
-\subsection{DRM}
+\subsection{DRM}\label{drm backend}
 
 TODO
 
-\subsection{Libinput}
+\subsection{Libinput}\label{libinput backend}
 
 TODO
 
-\subsection{Wayland}
+\subsection{Wayland}\label{wl backend}
 
 The Wayland backend, available in \code{wlr/backend/wayland.h}, allows you to
 open Wayland windows on a different Wayland compositor and treat them as
@@ -147,15 +148,215 @@ open Wayland windows on a different Wayland compositor and treat them as
 dynamically at runtime with \textbf{wlr_wl_output_create} (and in fact you must
 add at least one of these explicitly for the backend to be effective).
 
-\subsection{X11}
+\subsection{X11}\label{x11 backend}
 
 TODO
 
-\subsection{RDP}
+\subsection{RDP}\label{rdp backend}
 
 TODO
 
-\subsection{Headless}
+\subsection{Headless}\label{headless backend}
+
+TODO
+
+\newpage
+\section{Types}\label{types}
+
+There are various kinds of types in wlroots. It is useful to explain the broad
+purpose of each kind of type.
+
+\subsection{Data Structures}\label{data structures}
+
+Some types are implementations of simple data structures, and are useful as
+inputs to functions throughout wlroots or as storage for certain kinds of
+information.
+
+\begin{itemize}
+    \itemsep0em
+    \item \nameref{wlr box}
+    \item \nameref{wlr list}
+    \item \nameref{wlr matrix}
+\end{itemize}
+
+\subsection{Convenience Types}\label{convenience types}
+
+These optional types provide convenience for the compositor by implementing
+functionality common to many Wayland compositors.
+
+\begin{itemize}
+    \itemsep0em
+    \item \nameref{wlr cursor}
+    \item \nameref{wlr output layout}
+\end{itemize}
+
+\subsection{Hardware Abstractions}\label{hardware abstractions}
+
+Several types are available that abstract the hardware provided by backends.
+There is some overlap with \nameref{wl interfaces}, as many of these types
+are made available to clients as well, generally with the compositor's consent.
+
+\begin{itemize}
+    \itemsep0em
+    \item \nameref{wlr input device}
+    \item \nameref{wlr keyboard}
+    \item \nameref{wlr output}
+    \item \nameref{wlr pointer}
+    \item \nameref{wlr tablet pad}
+    \item \nameref{wlr tablet tool}
+    \item \nameref{wlr touch}
+\end{itemize}
+
+\subsection{Wayland Interfaces}\label{wl interfaces}
+
+These types implement a specific interface in the (or \emph{a}) Wayland
+protocol. They implement much of the boilerplate, any useful state handling,
+raise events when necessary, and offer users functions for manipulating their
+resources. Note that there is some overlap with convenience types here. Many
+resoruces, such as \textbf{wlr_output}, provide functionality for both the
+compositor's benefit and the Wayland client.
+
+\begin{itemize}
+    \itemsep0em
+    \item \nameref{wlr compositor}
+    \item \nameref{wlr data device}
+    \item \nameref{wlr keyboard}
+    \item \nameref{wlr output}
+    \item \nameref{wlr pointer}
+    \item \nameref{wlr region}
+    \item \nameref{wlr screenshooter}
+    \item \nameref{wlr seat}
+    \item \nameref{wlr server decoration}
+    \item \nameref{wlr surface}
+    \item \nameref{wlr tablet pad}
+    \item \nameref{wlr tablet tool}
+    \item \nameref{wlr touch}
+    \item \nameref{wlr wl shell}
+    \item \nameref{wlr xdg shell v6}
+\end{itemize}
+
+\subsection{Special Types}\label{special types}
+
+Some types are spread throughout their respective subsystems and are not
+included in \code{include/types/*.h}. These include:
+
+\begin{itemize}
+    \itemsep0em
+    \item \nameref{wlr backend}
+    \item \nameref{wlr renderer}
+    \item \nameref{wlr texture}
+    \item \nameref{wlr xcursor}
+    \item \nameref{wlr xwayland}
+\end{itemize}
+
+\newpage
+\section{Type Reference}\label{type reference}
+
+\subsection{wlr_backend}\label{wlr backend}
+
+TODO
+
+\subsection{wlr_box}\label{wlr box}
+
+TODO
+
+\subsection{wlr_compositor}\label{wlr compositor}
+
+TODO
+
+\subsection{wlr_cursor}\label{wlr cursor}
+
+TODO
+
+\subsection{wlr_data_device}\label{wlr data device}
+
+TODO
+
+\subsection{wlr_gamma_control}\label{wlr gamma control}
+
+TODO
+
+\subsection{wlr_input_device}\label{wlr input device}
+
+TODO
+
+\subsection{wlr_keyboard}\label{wlr keyboard}
+
+TODO
+
+\subsection{wlr_list}\label{wlr list}
+
+TODO
+
+\subsection{wlr_matrix}\label{wlr matrix}
+
+TODO
+
+\subsection{wlr_output}\label{wlr output}
+
+TODO
+
+\subsection{wlr_output_layout}\label{wlr output layout}
+
+TODO
+
+\subsection{wlr_pointer}\label{wlr pointer}
+
+TODO
+
+\subsection{wlr_region}\label{wlr region}
+
+TODO
+
+\subsection{wlr_renderer}\label{wlr renderer}
+
+TODO
+
+\subsection{wlr_screenshooter}\label{wlr screenshooter}
+
+TODO
+
+\subsection{wlr_seat}\label{wlr seat}
+
+TODO
+
+\subsection{wlr_server_decoration}\label{wlr server decoration}
+
+TODO
+
+\subsection{wlr_surface}\label{wlr surface}
+
+TODO
+
+\subsection{wlr_tablet_pad}\label{wlr tablet pad}
+
+TODO
+
+\subsection{wlr_tablet_tool}\label{wlr tablet tool}
+
+TODO
+
+\subsection{wlr_texture}\label{wlr texture}
+
+TODO
+
+\subsection{wlr_touch}\label{wlr touch}
+
+TODO
+
+\subsection{wlr_wl_shell}\label{wlr wl shell}
+
+TODO
+
+\subsection{wlr_xcursor}\label{wlr xcursor}
+
+TODO
+
+\subsection{wlr_xdg_shell_v6}\label{wlr xdg shell v6}
+
+TODO
+
+\subsection{wlr_xwayland}\label{wlr xwayland}
 
 TODO
 
