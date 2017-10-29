@@ -1,6 +1,7 @@
 \documentclass{article}
 \usepackage{hyperref}
 \usepackage[nohyphen]{underscore}
+\newcommand{\code}[1]{\texttt{#1}}
 \begin{document}
 \title{Modular Wayland compositors with wlroots}
 \author{Drew DeVault et al
@@ -101,5 +102,61 @@ like \textbf{wlr_cursor}. Also included are types like \textbf{wlr_keyboard},
 which are abstractions for backend types. Types like this are generally
 accompanied by an \emph{interface}, which can be implemented by compositors and
 integrated with other parts of wlroots.
+
+\newpage
+\section{Backends}
+
+\subsection{Backend initialization}
+
+There are two steps to setting up a backend -- first they are created, and then
+they are started. During creation, the backend will obtain access to the
+resources it needs, configure events on the event loop, test for required
+features, and so on. During this stage, backends providing outputs are also
+expected to configure their EGL context. Starting a backend will begin
+presenting itself to the user and will start to create input and output devices
+and pass them to the compositor. Backends are started with
+\textbf{wlr_backend_start}, available in \code{wlr/backend.h}. Creation is more
+subtle.
+
+\subsection{Automatic selection}
+
+The simplest way to obtain a backend is with \textbf{wlr_backend_autocreate},
+available in \code{wlr/backend.h}. It will examine the runtime environment and
+return the most suitable \textbf{wlr_backend}.
+
+\subsection{Multi-backend}
+
+A backend is available in \code{wlr/backend/multi.h} which can encapsulate many
+other backends. Inputs and outputs added in these several backends can be
+bubbled up through the multi-backend as if it were a single backend. Backends
+can also be added to and removed from a multi-backend at runtime.
+
+\subsection{DRM}
+
+TODO
+
+\subsection{Libinput}
+
+TODO
+
+\subsection{Wayland}
+
+The Wayland backend, available in \code{wlr/backend/wayland.h}, allows you to
+open Wayland windows on a different Wayland compositor and treat them as
+\textbf{wlr_outputs} for nesting compositors. You may add \textbf{wlr_outputs}
+dynamically at runtime with \textbf{wlr_wl_output_create} (and in fact you must
+add at least one of these explicitly for the backend to be effective).
+
+\subsection{X11}
+
+TODO
+
+\subsection{RDP}
+
+TODO
+
+\subsection{Headless}
+
+TODO
 
 \end{document}
