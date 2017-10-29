@@ -60,7 +60,7 @@ duplicated between projects with this approach, which can lead to compositors
 which are subtly incompatible with each other.
 
 The approach taken by \textbf{wlroots} offers reusability and consistency
-between compositors based on it, and offloads lots work from the compositor
+between compositors based on it, and offloads lots of work from the compositor
 implementation. This is accomplished without making design decisions on behalf
 of the compositor implementation: we believe virtually any novel kind of
 compositor can be built on top of wlroots.
@@ -92,7 +92,7 @@ well.
 Also available is the \emph{multi} backend, which acts as a container for many
 backends. This is necessary, for example, to use DRM and libinput together. It
 also allows you to add and remove backends at runtime. An example use-case:
-adding an RDP backend at runtime.
+adding an rdp backend at runtime.
 
 \subsection{Types}\label{high level types}
 
@@ -311,8 +311,8 @@ this system and available backends see \nameref{high level backends}.
 
 \begin{verbatim}
 struct wlr_box {
-	int x, y;
-	int width, height;
+    int x, y;
+    int width, height;
 };
 \end{verbatim}
 
